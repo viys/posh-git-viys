@@ -72,6 +72,7 @@ function prompt {
     Write-Host -NoNewline "PS $PWD"
 
     # 显示路径和带颜色的分支状态
+
     # if ($branch) {
     #     Write-Host -NoNewline -ForegroundColor $color " ⎇ $branch"
     # }
