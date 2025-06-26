@@ -5,6 +5,10 @@ function prompt {
     if (Test-Path .git) {
         $branchName = git rev-parse --abbrev-ref HEAD 2>$null
 
+        if ($branchName -eq 'HEAD') {
+            $branchName = $null
+        }
+
         if ($branchName) {
             $status = git status --porcelain 2>$null
 
@@ -40,16 +44,16 @@ function prompt {
                     $ahead = [int]$counts[1]
                     $behind = [int]$counts[0]
                     if ($ahead -gt 0 -and $behind -gt 0) {
-                        $syncSymbol = '↕'
+                        $syncSymbol = ' ↕'
                         $color = 'Magenta'
                     } elseif ($ahead -gt 0) {
-                        $syncSymbol = '↑'
+                        $syncSymbol = ' ↑'
                         $color = 'Cyan'
                     } elseif ($behind -gt 0) {
-                        $syncSymbol = '↓'
+                        $syncSymbol = ' ↓'
                         $color = 'Blue'
                     } else {
-                        $syncSymbol = '✓'
+                        $syncSymbol = ' ✓'
                         $color = 'Green'
                     }
                 }
@@ -64,7 +68,7 @@ function prompt {
                 $color = 'Yellow'
             }
 
-            $branch = "$branchName $syncSymbol"
+            $branch = "$branchName$syncSymbol"
         }
     }
 

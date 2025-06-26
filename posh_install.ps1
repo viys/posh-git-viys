@@ -13,18 +13,18 @@ if (Test-Path $PROFILE) {
 
     # 复制文件进行备份
     Copy-Item -Path $PROFILE -Destination $backupPath -Force
-
-    Write-Host "备份成功，备份文件路径： $backupPath"
 } else {
     Write-Host "文件不存在, 创建文件： $PROFILE"
     New-Item -ItemType Directory -Path $PROFILE -Force | Out-Null
+}
+
+if (Test-Path "$pwshPath/posh-git-viys.ps1") {
+    Remove-Item -Path "$pwshPath/posh-git-viys.ps1"
 }
 
 Copy-Item -Path "./posh-git-viys.ps1" -Destination "$pwshPath/posh-git-viys.ps1" -Force
 
 # 创建或覆盖文件并写入内容
 Set-Content -Path $PROFILE -Value $content -Encoding UTF8
-
-Write-Host "文件已创建并写入内容： $PROFILE"
 
 . $PROFILE
