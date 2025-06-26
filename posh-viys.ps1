@@ -10,11 +10,19 @@ function prompt {
 
             $hasUnstagedChanges = $false
             $hasStagedChanges = $false
+            $hasUntrackedChanges = $false
 
             if ($status) {
                 foreach ($line in $status) {
                     $indexStatus = $line.Substring(0,1)
                     $workTreeStatus = $line.Substring(1,1)
+
+                    # 判断未追踪文件
+                    if ($indexStatus -eq '?' -and $workTreeStatus -eq '?') {
+                        $hasUntrackedChanges = $true
+                        continue
+                    }
+
                     if ($indexStatus -ne ' ' -and $indexStatus -ne '?') {
                         $hasStagedChanges = $true
                     }
@@ -49,7 +57,8 @@ function prompt {
                 $color = 'Green'
             }
 
-            if ($hasUnstagedChanges) {
+            # 变更优先级：未暂存 或 未追踪 > 暂存
+            if ($hasUnstagedChanges -or $hasUntrackedChanges) {
                 $color = 'DarkRed'
             } elseif ($hasStagedChanges) {
                 $color = 'Yellow'
