@@ -45,7 +45,7 @@ function prompt {
                     $behind = [int]$counts[0]
                     if ($ahead -gt 0 -and $behind -gt 0) {
                         $syncSymbol = ' ↕'
-                        $color = 'Magenta'
+                        $color = 'DarkRed'
                     } elseif ($ahead -gt 0) {
                         $syncSymbol = ' ↑'
                         $color = 'Cyan'
@@ -63,7 +63,7 @@ function prompt {
 
             # 变更优先级：未暂存 或 未追踪 > 暂存
             if ($hasUnstagedChanges -or $hasUntrackedChanges) {
-                $color = 'DarkRed'
+                $color = 'DarkGray'
             } elseif ($hasStagedChanges) {
                 $color = 'Yellow'
             }
