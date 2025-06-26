@@ -11,7 +11,7 @@
 - ✅ 实时显示 Git 分支名和同步状态
 - ✅ 根据工作区状态切换颜色，快速识别变更
 
-![exhibit](.\image.png)
+![exhibit](./image.png)
 
 ------
 
