@@ -17,7 +17,7 @@
 
 ## 📁 包含文件
 
-### 1. `posh_install.ps1`
+### 1. `install_posh.ps1`
 
 > 安装脚本，一键完成配置修改和脚本部署。
 
@@ -54,7 +54,7 @@
 2. 在 PowerShell 中运行安装脚本：
 
 ```powershell
-.\posh_install.ps1
+.\install_install.ps1
 ```
 
 1. 安装完成后，每次打开 PowerShell，都会自动启用 Git 状态提示符。
