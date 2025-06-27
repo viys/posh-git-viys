@@ -1,6 +1,6 @@
 # 路径设置
-$pwshPath = "$HOME\Documents\PowerShell"
-$content = '. "$HOME\Documents\PowerShell\posh-git-viys.ps1"'
+$pwshPath = Split-Path -Path $PROFILE
+$content = '. "' + $pwshPath + '\posh-git-viys.ps1"'
 
 try {
     # 确保 pwshPath 目录存在
