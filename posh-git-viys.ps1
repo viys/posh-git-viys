@@ -1,63 +1,69 @@
 function prompt {
     $branch = ''
     $color = 'White'
+    $status = git status --porcelain=2 --branch 2>$null
 
-    if (Test-Path .git) {
-        $branchName = git rev-parse --abbrev-ref HEAD 2>$null
+    if ($LASTEXITCODE -eq 0 -and $status) {
+        $branchName = $null
+        $syncSymbol = ''
+        $hasUnstagedChanges = $false
+        $hasStagedChanges = $false
+        $hasUntrackedChanges = $false
 
-        if ($branchName -eq 'HEAD') {
-            $branchName = $null
+        foreach ($line in $status) {
+            if ($line -match '^# branch\.head (.+)$') {
+                $branchName = $Matches[1]
+                if ($branchName -like '(*') {
+                    $branchName = $null
+                }
+                continue
+            }
+
+            if ($line -match '^# branch\.ab \+(\d+) -(\d+)$') {
+                $ahead = [int]$Matches[1]
+                $behind = [int]$Matches[2]
+
+                if ($ahead -gt 0 -and $behind -gt 0) {
+                    $syncSymbol = ' ↕'
+                    $color = 'DarkRed'
+                } elseif ($ahead -gt 0) {
+                    $syncSymbol = ' ↑'
+                    $color = 'Cyan'
+                } elseif ($behind -gt 0) {
+                    $syncSymbol = ' ↓'
+                    $color = 'Blue'
+                } else {
+                    $syncSymbol = ' ✓'
+                    $color = 'Green'
+                }
+                continue
+            }
+
+            if ($line.StartsWith('? ')) {
+                $hasUntrackedChanges = $true
+                continue
+            }
+
+            if ($line.StartsWith('1 ') -or $line.StartsWith('2 ')) {
+                $indexStatus = $line.Substring(2, 1)
+                $workTreeStatus = $line.Substring(3, 1)
+
+                if ($indexStatus -ne '.') {
+                    $hasStagedChanges = $true
+                }
+                if ($workTreeStatus -ne '.') {
+                    $hasUnstagedChanges = $true
+                }
+                continue
+            }
+
+            if ($line.StartsWith('u ')) {
+                $hasUnstagedChanges = $true
+            }
         }
 
         if ($branchName) {
-            $status = git status --porcelain 2>$null
-
-            $hasUnstagedChanges = $false
-            $hasStagedChanges = $false
-            $hasUntrackedChanges = $false
-
-            if ($status) {
-                foreach ($line in $status) {
-                    $indexStatus = $line.Substring(0,1)
-                    $workTreeStatus = $line.Substring(1,1)
-
-                    # 判断未追踪文件
-                    if ($indexStatus -eq '?' -and $workTreeStatus -eq '?') {
-                        $hasUntrackedChanges = $true
-                        continue
-                    }
-
-                    if ($indexStatus -ne ' ' -and $indexStatus -ne '?') {
-                        $hasStagedChanges = $true
-                    }
-                    if ($workTreeStatus -ne ' ' -and $workTreeStatus -ne '?') {
-                        $hasUnstagedChanges = $true
-                    }
-                }
-            }
-
-            $syncSymbol = ''
-            $aheadBehind = git rev-list --left-right --count '@{upstream}...HEAD' 2>$null
-            if ($aheadBehind) {
-                $counts = $aheadBehind -split "`t"
-                if ($counts.Length -eq 2) {
-                    $ahead = [int]$counts[1]
-                    $behind = [int]$counts[0]
-                    if ($ahead -gt 0 -and $behind -gt 0) {
-                        $syncSymbol = ' ↕'
-                        $color = 'DarkRed'
-                    } elseif ($ahead -gt 0) {
-                        $syncSymbol = ' ↑'
-                        $color = 'Cyan'
-                    } elseif ($behind -gt 0) {
-                        $syncSymbol = ' ↓'
-                        $color = 'Blue'
-                    } else {
-                        $syncSymbol = ' ✓'
-                        $color = 'Green'
-                    }
-                }
-            } else {
+            if (-not $syncSymbol) {
                 $color = 'Green'
             }
 
@@ -74,14 +80,6 @@ function prompt {
 
     # 显示当前目录
     Write-Host -NoNewline "PS $PWD"
-
-    # 显示路径和带颜色的分支状态
-
-    # if ($branch) {
-    #     Write-Host -NoNewline -ForegroundColor $color " ⎇ $branch"
-    # }
-
-    # return "`n> "
 
     if ($branch) {
         Write-Host -NoNewline -ForegroundColor $color " ⎇ $branch "

@@ -25,7 +25,7 @@
 
 - 检查 `$PROFILE` 是否存在，若存在则自动备份。
 - 将 `posh-git-viys.ps1` 复制到 `$HOME\Documents\PowerShell`。
-- 修改 `$PROFILE` 文件，写入引用语句（自动加载脚本）。
+- 保留原有 `$PROFILE` 内容，仅在缺失时追加引用语句（自动加载脚本）。
 - 立即应用修改，生效新的 Git 提示符功能。
 
 ### 2. `posh-git-viys.ps1`
@@ -34,7 +34,7 @@
 
 **它做了什么：**
 
-- 检测当前是否在 Git 仓库中。
+- 通过一次 `git status --porcelain=2 --branch` 同时读取分支、同步状态和工作区变更。
 - 显示当前 Git 分支名，带同步状态符号（↑↓↕✓）。
   - `↕`：本地和远程分支均有变更（变红）
   - `↑`：本地分支领先远程分支（变青）
@@ -54,10 +54,10 @@
 2. 在 PowerShell 中运行安装脚本：
 
 ```powershell
-.\install_install.ps1
+.\install_posh.ps1
 ```
 
-1. 安装完成后，每次打开 PowerShell，都会自动启用 Git 状态提示符。
+3. 安装完成后，每次打开 PowerShell，都会自动启用 Git 状态提示符。
 
 ------
 
